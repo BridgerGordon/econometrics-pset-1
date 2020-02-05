@@ -1,0 +1,109 @@
+---
+title: "Econometrics Pset 1"
+author: "Bridger Gordon"
+date: "2/4/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Clear the workspace 
+rm(list=ls())
+
+# Install and load packages
+library(haven)
+library(tidyverse)
+library(sandwich)
+library(lmtest)
+
+# Load in the stata dataset
+health <- read_dta("healthinequality.dta")
+
+```
+
+## Question 1
+
+```{r model}
+
+model1 <- lm(life_exp ~ cur_smoke, data = health) 
+
+#heteroskedacity-only
+summary(model1)
+
+#heteroskedacity-robust
+coeftest(model1, vcov = vcovHC(model1, type="HC1"))
+
+```
+
+Equation Form: y = 78.4936 + (-7.4460) * cur_smoke
+
+a) the coefficient (-7.4460) represents that an increase of 10 percentage points to smoking is associated with a 0.7446 year decrease to life expectancy.
+
+b) r squared is 0.1208 -- tells us that there are other factors that also explain it (this explains 12% of the variability)
+
+c) ??
+
+d) robust has larger standard error and is more reliable
+
+## Question 2
+
+1.96 * 1.11506 = margin of error = 2.1855176
+
+(-9.6315, -5.2604)
+
+## Question 3
+What range of estimates do the lower and upper bounds on the confidence interval allow you to rule out?
+
+Allows us to rule out / reject slope coefficient less than 9.63 or greater than -5.26
+
+## Question 4
+
+```{r multimodel}
+
+model2 <- lm(life_exp ~ cur_smoke + bmi_obese + exercise, data = health) 
+
+#heteroskedacity-only
+summary(model2)
+
+#heteroskedacity-robust
+coeftest(model2, vcov = vcovHC(model2, type="HC1"))
+
+```
+
+a) an increase of 10 pp to the share of people exercising is associated with an increase of 0.56 years in life expectancy on average
+
+b) yes, smoking and obesity reduce life expectancy and exercise increases it
+
+## Question 5
+
+tables
+
+## Question 6
+
+a) 
+
+b) wealth / class ?
+
+
+
+```{r}
+#Run regression with homoskedasticity-only standard errors 
+#mod1 <- lm(yvar~xvar1+xvar2 + xvar3, data = health) 
+#summary(mod1)
+#Report coefficients with heteroskedasticity robust standard errors 
+#coeftest(mod1, vcov = vcovHC(mod1, type="HC1"))
+
+#Store residuals from regression of yvar on xvar1 and xvar3 
+#m1 <- lm(yvar ~ xvar1+ xvar3, data = health)
+#y.uhat.resid <- m1$residuals
+
+# Draw scatter plot with linear fit line
+#ggplot() + geom_point(aes(x = xvar1, y = yvar)) +
+#geom_smooth(aes(x = xvar, y = yvar), method = "lm", se = F)
+#Save graph as figure1a.png ggsave("figure1a.png")
+
+#sink(file="ps1_log.txt", split=TRUE) 
+#sink()
+```
+
